@@ -28,21 +28,6 @@ class Spaceship{
     lasers.add(new Laser(centerX, centerY-radius));
   }
   
-  void checkHit(ArrayList<Debris> debrisList){
-    for(int x=0; x < debrisList.size(); x++){
-      for(int y=0; y < lasers.size(); y++){
-        if(lasers.get(y).posY - lasers.get(y).lenLaser < debrisList.get(x).posY + debrisList.get(x).radius
-           && lasers.get(y).posX > debrisList.get(x).posX - debrisList.get(x).radius
-           && lasers.get(y).posX < debrisList.get(x).posX + debrisList.get(x).radius){
-          debrisList.remove(x);
-          lasers.remove(y);
-          break;
-          
-        }
-      }
-    }
-  }
-  
   void drawShip(){
     fill(0,0,255);
     strokeWeight(2);

@@ -1,4 +1,5 @@
 ArrayList<Debris> debrisList;
+ArrayList<Explosion> explosions;
 Spaceship ship;
 
 void setup(){
@@ -6,6 +7,7 @@ void setup(){
   background(245,245,245);
   
   debrisList = new ArrayList<Debris>();
+  explosions = new ArrayList<Explosion>();
   ship = new Spaceship();
 }
 
@@ -14,20 +16,46 @@ void draw(){
   
   ship.drawShip();
   ship.drawLasers();
-  ship.checkHit(debrisList);
+  checkHit(ship.lasers);
+  
   ship.cleanupLasers();
   cleanupDebris();
   
   if(random(1) < 0.01){
     debrisList.add(new Debris());
   }
+     
+  for(int i = 0; i < explosions.size(); i++){
+    for(int n = 0; n < explosions.get(i).particles.size(); n++){
+      explosions.get(i).particles.get(n).update();
+      explosions.get(i).particles.get(n).drawParticle();
+      
+    }
+  } 
   
   for(int i = 0; i < debrisList.size(); i++){
     debrisList.get(i).update();
     debrisList.get(i).drawDebris();
-  }   
+  } 
 }
 
+void checkHit(ArrayList<Laser> lasers){
+  for(int x=0; x < debrisList.size(); x++){
+    for(int y=0; y < lasers.size(); y++){
+      if(lasers.get(y).posY - lasers.get(y).lenLaser < debrisList.get(x).posY + debrisList.get(x).radius
+         && lasers.get(y).posX > debrisList.get(x).posX - debrisList.get(x).radius
+         && lasers.get(y).posX < debrisList.get(x).posX + debrisList.get(x).radius){
+        
+        explosions.add(new Explosion(debrisList.get(x).posX, debrisList.get(x).posY, debrisList.get(x).colour));
+        debrisList.remove(x);
+        lasers.remove(y);
+        break;
+          
+      }
+    }
+  }
+}
+  
 void cleanupDebris(){
   for(int i = 0; i < debrisList.size(); i++){
     if(debrisList.get(i).posY - debrisList.get(i).radius > height){
