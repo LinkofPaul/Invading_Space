@@ -41,12 +41,4 @@ class Spaceship{
       lasers.get(i).drawLaser();
     } 
   }
-  
-  void cleanupLasers(){
-    for(int i = 0; i < lasers.size(); i++){
-      if(lasers.get(i).posY < 0){
-        lasers.remove(i);
-      }
-    } 
-  }
 }; 

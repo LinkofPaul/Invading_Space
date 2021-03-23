@@ -1,10 +1,12 @@
 ArrayList<Debris> debrisList;
 ArrayList<Explosion> explosions;
 Spaceship ship;
+color bg_color;
 
 void setup(){
   size(800,450);
-  background(245,245,245);
+  bg_color = color(245,245,245);
+  background(bg_color);
   
   debrisList = new ArrayList<Debris>();
   explosions = new ArrayList<Explosion>();
@@ -12,25 +14,24 @@ void setup(){
 }
 
 void draw(){
-  background(245,245,245);
-  
-  ship.drawShip();
-  ship.drawLasers();
-  checkHit(ship.lasers);
-  
-  ship.cleanupLasers();
-  cleanupDebris();
-  
-  if(random(1) < 0.01){
-    debrisList.add(new Debris());
-  }
-     
+  background(bg_color);
   for(int i = 0; i < explosions.size(); i++){
     for(int n = 0; n < explosions.get(i).particles.size(); n++){
       explosions.get(i).particles.get(n).update();
       explosions.get(i).particles.get(n).drawParticle();
       
     }
+  }
+  
+  ship.drawShip();
+  ship.drawLasers();
+  checkHit(ship.lasers);
+  
+  cleanupLasersAndchangeBG(ship.lasers);
+  cleanupDebris();
+  
+  if(random(1) < 0.01){
+    debrisList.add(new Debris());
   } 
   
   for(int i = 0; i < debrisList.size(); i++){
@@ -62,6 +63,16 @@ void cleanupDebris(){
       debrisList.remove(i);
     }
   }
+}
+
+void cleanupLasersAndchangeBG(ArrayList<Laser> lasers){
+  for(int i = 0; i < lasers.size(); i++){
+    if(lasers.get(i).posY < 0){         
+      lasers.remove(i);
+      
+      bg_color = color((int) random(0,255), (int) random(0,255), (int) random(0,255));
+    }
+  } 
 }
 
 void keyPressed() {
