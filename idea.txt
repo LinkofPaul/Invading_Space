@@ -1,0 +1,13 @@
+- Objects (circles) fall from the sky 
+- (Objects have different colors)
+- You fly space ship at bottom of screen
+- When hitting object (cricle), it explodes like firework, confetti or random lines outwards and is drawn on screen
+- Objects (circles) fall in angles and can collide with each other
+- When hitting ceiling, background color changes
+- Two modes: Free modes where you can create freely and
+             competitive with only three lives
+- In competitive you die when polygon reaches bottom or you get hit
+
+- time left and 3 hearts right
+- write time scores to txt file
+
