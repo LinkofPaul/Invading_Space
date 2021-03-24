@@ -49,20 +49,38 @@ void draw(){
   }
 }
 
-
-void drawStartMenu(){
-  background(bg_color);
-  ship.drawShip();
-  fill(225);
+void drawMenu(){
   strokeWeight(5);
   stroke(0);
+  fill(225);
   rect(300, 150, 200, 50); 
   rect(300, 250, 200, 50);
+  
+  if(mouseX > 300 && mouseX < 500 && mouseY > 150 && mouseY < 200){
+    cursor(HAND);
+    fill(255);
+    rect(300, 150, 200, 50);    
+  }
+  
+  if(mouseX > 300 && mouseX < 500 && mouseY > 250 && mouseY < 300){
+    cursor(HAND);
+    fill(255);
+    rect(300, 250, 200, 50);
+  }
+  
+  if(!(mouseX > 300 && mouseX < 500 && mouseY > 150 && mouseY < 200) 
+     && !(mouseX > 300 && mouseX < 500 && mouseY > 250 && mouseY < 300)) cursor(ARROW);
   
   textSize(32);
   fill(0,0,0);
   text("PlayMode", 330, 185);
   text("FreeMode", 330, 285);
+}
+
+void drawStartMenu(){
+  background(bg_color);
+  ship.drawShip();
+  drawMenu();
   
   textSize(56);
   fill(0,0,0);
@@ -70,16 +88,7 @@ void drawStartMenu(){
 }
 
 void drawGameoverMenu(){ 
-  fill(225);
-  strokeWeight(5);
-  stroke(0);
-  rect(300, 150, 200, 50); 
-  rect(300, 250, 200, 50);
-  
-  textSize(32);
-  fill(0,0,0);
-  text("PlayMode", 330, 185);
-  text("FreeMode", 330, 285);
+  drawMenu();
   
   textSize(56);
   fill(0,0,0);
@@ -91,7 +100,7 @@ void drawGameoverMenu(){
   }
 }
 
-void startPlaymode(){
+void drawGame(){
   background(bg_color);
   for(int i = 0; i < explosions.size(); i++){
     for(int n = 0; n < explosions.get(i).particles.size(); n++){
@@ -102,9 +111,8 @@ void startPlaymode(){
   
   ship.drawShip();
   ship.drawLasers();
+  cleanupLasersAndChangeBackground(ship.lasers);
   checkHit(ship.lasers);
-  
-  cleanupLasersAndchangeBG(ship.lasers);
   
   if(random(1) < 0.01){
     debrisList.add(new Debris());
@@ -113,36 +121,21 @@ void startPlaymode(){
   for(int i = 0; i < debrisList.size(); i++){
     debrisList.get(i).update();
     debrisList.get(i).drawDebris();
-  } 
+  }
+}
+
+void startPlaymode(){
+  drawGame();
   
   updateLives();
   updateTime();
 }
 
 void startFreemode(){
-  background(bg_color);
-  for(int i = 0; i < explosions.size(); i++){
-    for(int n = 0; n < explosions.get(i).particles.size(); n++){
-      explosions.get(i).particles.get(n).update();
-      explosions.get(i).particles.get(n).drawParticle();
-    }
-  }
+  drawGame();
   
-  ship.drawShip();
-  ship.drawLasers();
-  checkHit(ship.lasers);
-  
-  cleanupLasersAndchangeBG(ship.lasers);
+  drawAndCheckExitButton();
   cleanupDebris();
-  
-  if(random(1) < 0.01){
-    debrisList.add(new Debris());
-  } 
-  
-  for(int i = 0; i < debrisList.size(); i++){
-    debrisList.get(i).update();
-    debrisList.get(i).drawDebris();
-  } 
 }
 
 void updateLives(){
@@ -179,6 +172,18 @@ void updateTime(){
   text(nf(runningTime, 0, 1), 20, 40);
 }
 
+void drawAndCheckExitButton(){
+  textSize(56);
+  fill(250,0,60);
+  text("X", 740, 60);
+  
+  if(mouseX > 730 && mouseX < 785 && mouseY > 10 && mouseY < 70){
+    cursor(HAND);
+  }else{
+    cursor(ARROW);
+  }
+}
+
 void gameover(){
   if(playmode) finishTime = (millis() - startTime)/1000;
   
@@ -205,9 +210,9 @@ void takingScreenshot(){
   }
   
   if(finishTime > 0){
-    saveFrame("./screenshots/screenshot-" + finishTime + "######.png");
+    saveFrame("./screenshots/screenshot_playmode-" + finishTime + ".png");
   }else{
-    saveFrame("./screenshots/screenshot-######.png");
+    saveFrame("./screenshots/screenshot_freemode-" + "####.png");
   }
   
   
@@ -245,7 +250,7 @@ void cleanupDebris(){
   }
 }
 
-void cleanupLasersAndchangeBG(ArrayList<Laser> lasers){
+void cleanupLasersAndChangeBackground(ArrayList<Laser> lasers){
   for(int i = 0; i < lasers.size(); i++){
     if(lasers.get(i).posY < 0){         
       lasers.remove(i);
@@ -255,25 +260,26 @@ void cleanupLasersAndchangeBG(ArrayList<Laser> lasers){
   } 
 }
 
+void startMode(boolean isPlayMode){
+    start = false;
+    gameover = false;
+    playing = true; 
+    playmode = isPlayMode;
+    freemode = !isPlayMode;
+    cursor(ARROW);
+    finishTime = 0;
+    bg_color = color(245,245,245);
+}
+
 void mousePressed(){
   if(mouseX > 300 && mouseX < 500 && mouseY > 150 && mouseY < 200 && !playmode){
-    start = false;
-    gameover = false;
-    playmode = true;
-    freemode = false;
-    playing = true;
+    startMode(true);
     player_lives = 3;
     startTime = millis();
-    finishTime = 0;
-    bg_color = color(245,245,245);
   }else if(mouseX > 300 && mouseX < 500 && mouseY > 250 && mouseY < 300 && !freemode){
-    start = false;
-    gameover = false;
-    playmode = false;
-    freemode = true;
-    playing = true;
-    finishTime = 0;
-    bg_color = color(245,245,245);
+    startMode(false);
+  }else if(mouseX > 730 && mouseX < 785 && mouseY > 10 && mouseY < 70 && freemode){
+    gameover();
   }
 }
 
