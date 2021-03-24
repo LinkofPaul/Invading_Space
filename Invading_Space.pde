@@ -158,7 +158,11 @@ void updateLives(){
   }
   
   for(int i = 0; i < debrisList.size(); i++){
-    if(debrisList.get(i).posY + debrisList.get(i).radius/2 >= height){
+    if(debrisList.get(i).posY + debrisList.get(i).radius/3 >= height
+       || debrisList.get(i).posY + debrisList.get(i).radius/3 >= ship.centerY - ship.radius
+          && debrisList.get(i).posX >= ship.centerX - ship.radius && debrisList.get(i).posX <= ship.centerX + ship.radius
+       || debrisList.get(i).posY + debrisList.get(i).radius/5 >= ship.centerY - ship.radius
+          && debrisList.get(i).posX >= ship.centerX - ship.radius*2 && debrisList.get(i).posX <= ship.centerX + ship.radius*2){
       debrisList.remove(i);
       player_lives -= 1;
     }
@@ -228,7 +232,7 @@ void takingScreenshot(){
 void checkHit(ArrayList<Laser> lasers){
   for(int x=0; x < debrisList.size(); x++){
     for(int y=0; y < lasers.size(); y++){
-      if(lasers.get(y).posY - lasers.get(y).lenLaser < debrisList.get(x).posY + debrisList.get(x).radius
+      if(lasers.get(y).posY - lasers.get(y).lenLaser < debrisList.get(x).posY + debrisList.get(x).radius/2
          && lasers.get(y).posX > debrisList.get(x).posX - debrisList.get(x).radius
          && lasers.get(y).posX < debrisList.get(x).posX + debrisList.get(x).radius){
         
