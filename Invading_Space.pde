@@ -5,6 +5,7 @@ ArrayList<Explosion> explosions;
 Spaceship ship;
 color bg_color;
 
+SoundFile menu_music;
 SoundFile background_music;
 SoundFile shoot_sound;
 SoundFile explosion_sound;
@@ -35,6 +36,9 @@ void setup(){
   explosion_sound.amp(1);
   gameover_music = new SoundFile(this, "gameover_sound.wav");
   gameover_music.amp(0.75);
+  menu_music = new SoundFile(this, "menu_music.wav");
+  menu_music.amp(0.15);
+  menu_music.loop();
   
   start = true;
   playmode = false;
@@ -294,6 +298,7 @@ void startMode(boolean isPlayMode){
     cursor(ARROW);
     finishTime = 0;
     bg_color = color(245,245,245);
+    menu_music.stop();
     background_music.loop();
 }
 
