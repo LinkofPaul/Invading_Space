@@ -1,7 +1,14 @@
+import processing.sound.*;
+
 ArrayList<Debris> debrisList;
 ArrayList<Explosion> explosions;
 Spaceship ship;
 color bg_color;
+
+SoundFile background_music;
+SoundFile shoot_sound;
+SoundFile explosion_sound;
+SoundFile gameover_music;
 
 boolean start;
 boolean playmode;
@@ -19,6 +26,15 @@ PImage heart3;
 void setup(){
   size(800,450);
   bg_color = color(245,245,245);
+  
+  background_music = new SoundFile(this, "background_music.wav");
+  background_music.amp(0.25);
+  shoot_sound = new SoundFile(this, "shot.wav");
+  shoot_sound.amp(0.25);
+  explosion_sound = new SoundFile(this, "explosion_sound.wav");
+  explosion_sound.amp(1);
+  gameover_music = new SoundFile(this, "gameover_sound.wav");
+  gameover_music.amp(0.75);
   
   start = true;
   playmode = false;
@@ -165,6 +181,7 @@ void updateLives(){
           && debrisList.get(i).posX >= ship.centerX - ship.radius*2 && debrisList.get(i).posX <= ship.centerX + ship.radius*2){
       debrisList.remove(i);
       player_lives -= 1;
+      explosion_sound.play();
     }
   }
 }
@@ -197,7 +214,10 @@ void gameover(){
   playing = false;
   playmode = false;
   freemode = false;
-    
+   
+  background_music.stop();
+  gameover_music.play();
+  
   ship = null;
   debrisList.clear();
   explosions.clear();
@@ -236,6 +256,7 @@ void checkHit(ArrayList<Laser> lasers){
          && lasers.get(y).posX > debrisList.get(x).posX - debrisList.get(x).radius
          && lasers.get(y).posX < debrisList.get(x).posX + debrisList.get(x).radius){
         
+        explosion_sound.play();
         explosions.add(new Explosion(debrisList.get(x).posX, debrisList.get(x).posY, debrisList.get(x).colour));
         debrisList.remove(x);
         lasers.remove(y);
@@ -273,6 +294,7 @@ void startMode(boolean isPlayMode){
     cursor(ARROW);
     finishTime = 0;
     bg_color = color(245,245,245);
+    background_music.loop();
 }
 
 void mousePressed(){
@@ -281,7 +303,7 @@ void mousePressed(){
     player_lives = 3;
     startTime = millis();
   }else if(mouseX > 300 && mouseX < 500 && mouseY > 250 && mouseY < 300 && !freemode){
-    startMode(false);
+    startMode(false);   
   }else if(mouseX > 730 && mouseX < 785 && mouseY > 10 && mouseY < 70 && freemode){
     gameover();
   }
@@ -296,6 +318,7 @@ void keyPressed() {
   
   if((key == ENTER || key == ' ') && playing){
     ship.shoot();
+    shoot_sound.play();
   }
   
   if(key == ESC && playing){
