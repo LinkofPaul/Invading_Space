@@ -11,12 +11,14 @@ SoundFile shoot_sound;
 SoundFile explosion_sound;
 SoundFile gameover_music;
 
+// booleans for switching logic of the game
 boolean start;
 boolean playmode;
 boolean freemode;
 boolean playing;
 boolean gameover;
 
+// variables for the playermode
 int player_lives;
 float startTime;
 float finishTime;
@@ -28,6 +30,7 @@ void setup(){
   size(800,450);
   bg_color = color(245,245,245);
   
+  // creating objects for all the sounds in the game
   background_music = new SoundFile(this, "background_music.wav");
   background_music.amp(0.25);
   shoot_sound = new SoundFile(this, "shot.wav");
@@ -40,18 +43,21 @@ void setup(){
   menu_music.amp(0.15);
   menu_music.loop();
   
+  // initialization of starting logic for switching
   start = true;
   playmode = false;
   freemode = false;
   playing = false;
   gameover = false;
   
+  // initialization of variables for playmode
   player_lives = 3;
   finishTime = 0;
   heart1 = loadImage("heart.png");
   heart2 = loadImage("heart.png");
   heart3 = loadImage("heart.png");
   
+  // create lists for objects in the game to keep track off
   debrisList = new ArrayList<Debris>();
   explosions = new ArrayList<Explosion>();
   ship = new Spaceship();
@@ -70,6 +76,7 @@ void draw(){
 }
 
 void drawMenu(){
+  // draw playmode and freemode buttons in recantgular shape
   strokeWeight(5);
   stroke(0);
   fill(225);
@@ -122,6 +129,7 @@ void drawGameoverMenu(){
 
 void drawGame(){
   background(bg_color);
+  // draw all explosions which have occurred so far on the canvas
   for(int i = 0; i < explosions.size(); i++){
     for(int n = 0; n < explosions.get(i).particles.size(); n++){
       explosions.get(i).particles.get(n).update();
@@ -131,9 +139,11 @@ void drawGame(){
   
   ship.drawShip();
   ship.drawLasers();
+  // delete lasers of a ship which have passed the top screen and change background of game
   cleanupLasersAndChangeBackground(ship.lasers);
   checkHit(ship.lasers);
   
+  // draw a piece of falling debris every frame with a certain chance
   if(random(1) < 0.01){
     debrisList.add(new Debris());
   } 
@@ -147,6 +157,7 @@ void drawGame(){
 void startPlaymode(){
   drawGame();
   
+  //check if ship has been hit or debris has hit the bottom without being destroyed
   updateLives();
   updateTime();
 }
@@ -155,10 +166,12 @@ void startFreemode(){
   drawGame();
   
   drawAndCheckExitButton();
+  // delete debris which have passed the bottom screen since in freemode not all get destroyed
   cleanupDebris();
 }
 
 void updateLives(){
+  // draw one heart less when player loses a life
   switch(player_lives){
     case 3:
       image(heart1, 640, 20, 40, 40);
@@ -177,6 +190,7 @@ void updateLives(){
       break;
   }
   
+  // check first if debris has passed the bottom screen or has hit the ship, if so reduce player life
   for(int i = 0; i < debrisList.size(); i++){
     if(debrisList.get(i).posY + debrisList.get(i).radius/3 >= height
        || debrisList.get(i).posY + debrisList.get(i).radius/3 >= ship.centerY - ship.radius
@@ -190,6 +204,7 @@ void updateLives(){
   }
 }
 
+// keep timer in playmode in the top left
 void updateTime(){
   float runningTime = (millis() - startTime)/1000;
   textSize(32);
@@ -197,6 +212,7 @@ void updateTime(){
   text(nf(runningTime, 0, 1), 20, 40);
 }
 
+// draw exit button top right in freemode
 void drawAndCheckExitButton(){
   textSize(56);
   fill(250,0,60);
@@ -212,6 +228,7 @@ void drawAndCheckExitButton(){
 void gameover(){
   if(playmode) finishTime = (millis() - startTime)/1000;
   
+  // create screenshot of the explosions when game ended
   takingScreenshot();
   
   gameover = true;
@@ -237,6 +254,7 @@ void takingScreenshot(){
     }
   }
   
+  // in playmode screenshot has the gametime and in freemode random number to distinguish screenshots
   if(finishTime > 0){
     saveFrame("./screenshots/screenshot_playmode-" + finishTime + ".png");
   }else{
@@ -253,6 +271,7 @@ void takingScreenshot(){
   } 
 }
 
+// check if a laser has successfully hit a debris and create a explosion at this position and remove debris and laser
 void checkHit(ArrayList<Laser> lasers){
   for(int x=0; x < debrisList.size(); x++){
     for(int y=0; y < lasers.size(); y++){
@@ -271,6 +290,7 @@ void checkHit(ArrayList<Laser> lasers){
   }
 }
   
+// delete debris which have passed the bottom screen since in freemode not all get destroyed
 void cleanupDebris(){
   for(int i = 0; i < debrisList.size(); i++){
     if(debrisList.get(i).posY - debrisList.get(i).radius > height){
@@ -279,6 +299,7 @@ void cleanupDebris(){
   }
 }
 
+// delete lasers of a ship which have passed the top screen and change background of game
 void cleanupLasersAndChangeBackground(ArrayList<Laser> lasers){
   for(int i = 0; i < lasers.size(); i++){
     if(lasers.get(i).posY < 0){         
@@ -289,6 +310,7 @@ void cleanupLasersAndChangeBackground(ArrayList<Laser> lasers){
   } 
 }
 
+// start free- or playmode by reseting some variables
 void startMode(boolean isPlayMode){
     start = false;
     gameover = false;
@@ -302,6 +324,7 @@ void startMode(boolean isPlayMode){
     background_music.loop();
 }
 
+// check if playmode or freemode button in menu has been pressed or exitbutton in freemode
 void mousePressed(){
   if(mouseX > 300 && mouseX < 500 && mouseY > 150 && mouseY < 200 && !playmode){
     startMode(true);
@@ -314,6 +337,8 @@ void mousePressed(){
   }
 }
 
+// maneuver ship with 'a', 'd' or 'left', 'right' and shoot with 'enter' or 'space'
+// can also exit game with 'esc'
 void keyPressed() {
   if((key == 'a' || keyCode == LEFT) && playing){
     ship.moveLeft();

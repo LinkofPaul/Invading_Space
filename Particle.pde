@@ -3,7 +3,7 @@ class Particle{
   float velX, velY;
   int radius;
   color colour;
-  int lifespan;
+  int particleDuration;
   float gravity;
   
   Particle(int posX, int posY, color colour){
@@ -11,23 +11,26 @@ class Particle{
     this.posY = posY;
     this.colour = colour;
     radius = 5;
-    lifespan = 200;
+    particleDuration = 200;
     gravity = 0.15;
+    // use normal distribution to have more particles towards the center than outwards
     velX = randomGaussian()*2;
     velY = randomGaussian()*2;
   } 
   
   void update(){
+    // apply small amount of gravity and also to x-Velocity to move faster to the sides
     velY += gravity;
     velX += random(-gravity,gravity)*2;
     posY += velY;
     posX += velX;
-    if(lifespan < 0){
+    // stop the particles after particleDuration hits zero
+    if(particleDuration < 0){
       velX = 0;
       velY = 0;
       gravity = 0;
     }else{
-      lifespan -= 10;
+      particleDuration -= 10;
     }
   } 
   

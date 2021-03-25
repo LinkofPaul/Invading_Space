@@ -5,6 +5,7 @@ class Spaceship{
   int velX;
   
   Spaceship(){  
+    // ship keeps track of their lasers shot
     lasers = new ArrayList<Laser>();
     radius = 15;
     velX = 20;
