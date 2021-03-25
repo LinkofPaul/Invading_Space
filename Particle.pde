@@ -12,14 +12,14 @@ class Particle{
     this.colour = colour;
     radius = 5;
     lifespan = 200;
-    gravity = 0.3;
-    velX = random(-5,5); 
-    velY = random(-5,5); 
+    gravity = 0.15;
+    velX = randomGaussian()*2;
+    velY = randomGaussian()*2;
   } 
   
   void update(){
     velY += gravity;
-    velX += random(-gravity,gravity);
+    velX += random(-gravity,gravity)*2;
     posY += velY;
     posX += velX;
     if(lifespan < 0){
