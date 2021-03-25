@@ -1,28 +1,33 @@
 class Particle{ 
-  int posX, posY;
-  int velX, velY;
+  float posX, posY;
+  float velX, velY;
   int radius;
   color colour;
   int lifespan;
+  float gravity;
   
   Particle(int posX, int posY, color colour){
     this.posX = posX;
     this.posY = posY;
     this.colour = colour;
     radius = 5;
-    lifespan = 100;
-    velX = (int) random(-5,5);
-    velY = (int) random(-5,5);
+    lifespan = 200;
+    gravity = 0.3;
+    velX = random(-5,5); 
+    velY = random(-5,5); 
   } 
   
-  void update(){ 
+  void update(){
+    velY += gravity;
+    velX += random(-gravity,gravity);
     posY += velY;
     posX += velX;
     if(lifespan < 0){
       velX = 0;
       velY = 0;
+      gravity = 0;
     }else{
-      lifespan -= 5;
+      lifespan -= 10;
     }
   } 
   

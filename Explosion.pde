@@ -3,7 +3,7 @@ class Explosion{
   
   Explosion(int posX, int posY, color colour){
     particles = new ArrayList<Particle>();
-    for(int i=0; i < 50; i++){
+    for(int i=0; i < 100; i++){
       particles.add(new Particle(posX, posY, colour));
     }
   } 
